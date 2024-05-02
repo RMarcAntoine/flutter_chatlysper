@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "920109505885",
+    "project_id": "chatlysper",
+    "storage_bucket": "chatlysper.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920109505885:android:be37320803a2dc67925cb4",
+        "android_client_info": {
+          "package_name": "com.example.chatlysper_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDSMXwdwlcROLHzy65MOfYnaFJXEQoydnA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
