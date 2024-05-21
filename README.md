@@ -1,8 +1,8 @@
 # chatlysper_app
 
-A new Flutter project.
+Une application Flutter tournée vers la messagerie.
 
-## Getting Started
+## Pour commencer
 
 This project is a starting point for a Flutter application.
 
