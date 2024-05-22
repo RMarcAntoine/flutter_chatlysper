@@ -21,45 +21,15 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-
   final ChatService _chatService = ChatService();
   final AuthServ _authService = AuthServ();
-
-  FocusNode myFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-
-    myFocusNode.addListener(() {
-      if (myFocusNode.hasFocus) {
-        Future.delayed(
-          const Duration(milliseconds: 500),
-          () => scrollDown(),
-        );
-      }
-    });
-
-    Future.delayed(
-      const Duration(milliseconds: 500),
-      () => scrollDown(),
-    );
-  }
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
-    myFocusNode.dispose();
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
-  }
-
-  final ScrollController _scrollController = ScrollController();
-  void scrollDown() {
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
-      duration: const Duration(seconds: 1),
-      curve: Curves.fastOutSlowIn,
-    );
   }
 
   void sendMessage() async {
@@ -67,9 +37,14 @@ class _ChatScreenState extends State<ChatScreen> {
       await _chatService.sendMessage(
           widget.receiverID, _messageController.text);
       _messageController.clear();
+      jumpToBottom();
     }
+  }
 
-    scrollDown();
+  void jumpToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+    }
   }
 
   @override
@@ -105,6 +80,12 @@ class _ChatScreenState extends State<ChatScreen> {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Text("Chargement...");
         }
+
+        // Jump to bottom when new messages arrive
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          jumpToBottom();
+        });
+
         return ListView(
           controller: _scrollController,
           children:
@@ -116,7 +97,6 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildMessageItem(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
     bool isCurrentUser = data['senderID'] == _authService.getCurrentUser()!.uid;
     var alignment =
         isCurrentUser ? Alignment.centerRight : Alignment.centerLeft;
@@ -130,7 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ChatBubble(
             message: data["message"],
             isCurrentUser: isCurrentUser,
-          )
+          ),
         ],
       ),
     );
@@ -146,7 +126,7 @@ class _ChatScreenState extends State<ChatScreen> {
               controller: _messageController,
               hintText: "Taper votre message",
               obscureText: false,
-              focusNode: myFocusNode,
+              focusNode: null,
             ),
           ),
           Container(
