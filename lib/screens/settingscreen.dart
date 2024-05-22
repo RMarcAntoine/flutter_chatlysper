@@ -29,8 +29,7 @@ class SettingScreen extends StatelessWidget {
           children: [
             const Text("Dark Mode"),
             CupertinoSwitch(
-              value:
-                  Provider.of<ThemeProvider>(context, listen: false).isDarkMode,
+              value: Provider.of<ThemeProvider>(context).isDarkMode,
               onChanged: (value) =>
                   Provider.of<ThemeProvider>(context, listen: false)
                       .toggleTheme(),
