@@ -21,6 +21,7 @@ class LoginScreen extends StatelessWidget {
       );
     } catch (e) {
       showDialog(
+        // ignore: use_build_context_synchronously
         context: context,
         builder: (context) => AlertDialog(
           title: Text(e.toString()),
