@@ -32,13 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
       for (var userData in users) {
         bool hasConversation = await _chatService.hasConversation(
             _authService.getCurrentUser()!.uid, userData["uid"]);
-        if (hasConversation) {
+        if (mounted) {
           setState(() {
-            _usersWithConversation.add(userData);
-          });
-        } else {
-          setState(() {
-            _usersWithoutConversation.add(userData);
+            if (hasConversation) {
+              _usersWithConversation.add(userData);
+            } else {
+              _usersWithoutConversation.add(userData);
+            }
           });
         }
       }
@@ -64,20 +64,24 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              onChanged: (query) {
-                setState(() {
-                  _searchQuery = query.toLowerCase();
-                });
-              },
-              decoration: InputDecoration(
-                hintText: 'Filtrer les utilisateurs...',
-                prefixIcon: const Icon(Icons.search),
-                filled: true,
-                fillColor: colorScheme.surface, // Adjust color based on theme
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20.0),
-                  borderSide: BorderSide.none,
+            child: SingleChildScrollView(
+              child: TextField(
+                onChanged: (query) {
+                  if (mounted) {
+                    setState(() {
+                      _searchQuery = query.toLowerCase();
+                    });
+                  }
+                },
+                decoration: InputDecoration(
+                  hintText: 'Filtrer les utilisateurs...',
+                  prefixIcon: const Icon(Icons.search),
+                  filled: true,
+                  fillColor: colorScheme.surface, // Adjust color based on theme
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
