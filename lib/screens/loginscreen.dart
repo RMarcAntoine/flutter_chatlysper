@@ -20,11 +20,10 @@ class LoginScreen extends StatelessWidget {
         _mdpController.text,
       );
     } catch (e) {
-      showDialog(
-        // ignore: use_build_context_synchronously
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text(e.toString()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Adresse email ou mot de passe incorrecte'),
+          backgroundColor: Colors.red,
         ),
       );
     }
