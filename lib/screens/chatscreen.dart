@@ -110,6 +110,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ChatBubble(
             message: data["message"],
             isCurrentUser: isCurrentUser,
+            timestamp: (data["timestamp"] as Timestamp).toDate(),
           ),
         ],
       ),
