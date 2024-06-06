@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:chatlysper_app/composants/mydrawer.dart';
 import 'package:chatlysper_app/composants/usertile.dart';
 import 'package:chatlysper_app/screens/chatscreen.dart';
+import 'package:chatlysper_app/screens/searchscreen.dart';
 import 'package:chatlysper_app/services/auth/authserv.dart';
 import 'package:chatlysper_app/services/chat/chatservice.dart';
 
@@ -15,9 +16,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final ChatService _chatService = ChatService();
   final AuthServ _authService = AuthServ();
-  String _searchQuery = '';
   late final List<Map<String, dynamic>> _usersWithConversation = [];
-  late final List<Map<String, dynamic>> _usersWithoutConversation = [];
 
   @override
   void initState() {
@@ -28,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void _loadUsers() async {
     _chatService.getUsersStream().listen((users) async {
       _usersWithConversation.clear();
-      _usersWithoutConversation.clear();
       for (var userData in users) {
         bool hasConversation = await _chatService.hasConversation(
             _authService.getCurrentUser()!.uid, userData["uid"]);
@@ -36,8 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             if (hasConversation) {
               _usersWithConversation.add(userData);
-            } else {
-              _usersWithoutConversation.add(userData);
             }
           });
         }
@@ -58,75 +54,47 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.grey,
         elevation: 0,
-      ),
-      drawer: const MyDrawer(),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SingleChildScrollView(
-              child: TextField(
-                onChanged: (query) {
-                  if (mounted) {
-                    setState(() {
-                      _searchQuery = query.toLowerCase();
-                    });
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'Chercher les utilisateurs...',
-                  prefixIcon: const Icon(Icons.search),
-                  filled: true,
-                  fillColor: colorScheme.surface, // Adjust color based on theme
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: BorderSide.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: _buildUserList(),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchScreen()),
+              );
+            },
           ),
         ],
       ),
+      drawer: const MyDrawer(),
+      body: _buildUserList(),
     );
   }
 
   Widget _buildUserList() {
-    List<Map<String, dynamic>> filteredUsers = [];
-    filteredUsers.addAll(_usersWithConversation);
-    filteredUsers.addAll(_usersWithoutConversation);
-
-    if (filteredUsers.isEmpty) {
+    if (_usersWithConversation.isEmpty) {
       return const Center(
         child: Text('Aucun utilisateur trouvé.'),
       );
     }
     return ListView.builder(
-      itemCount: filteredUsers.length,
+      itemCount: _usersWithConversation.length,
       itemBuilder: (context, index) {
-        var userData = filteredUsers[index];
-        if (userData["email"] != _authService.getCurrentUser()!.email &&
-            userData["email"].toLowerCase() == _searchQuery) {
-          return UserTile(
-            text: userData["email"],
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(
-                    receiverEmail: userData["email"],
-                    receiverID: userData["uid"],
-                  ),
+        var userData = _usersWithConversation[index];
+        return UserTile(
+          text: userData["email"],
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatScreen(
+                  receiverEmail: userData["email"],
+                  receiverID: userData["uid"],
                 ),
-              );
-            },
-          );
-        } else {
-          return Container();
-        }
+              ),
+            );
+          },
+        );
       },
     );
   }
