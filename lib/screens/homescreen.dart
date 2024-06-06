@@ -74,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   }
                 },
                 decoration: InputDecoration(
-                  hintText: 'Filtrer les utilisateurs...',
+                  hintText: 'Chercher les utilisateurs...',
                   prefixIcon: const Icon(Icons.search),
                   filled: true,
                   fillColor: colorScheme.surface, // Adjust color based on theme
@@ -109,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
       itemBuilder: (context, index) {
         var userData = filteredUsers[index];
         if (userData["email"] != _authService.getCurrentUser()!.email &&
-            userData["email"].toLowerCase().contains(_searchQuery)) {
+            userData["email"].toLowerCase() == _searchQuery) {
           return UserTile(
             text: userData["email"],
             onTap: () {
