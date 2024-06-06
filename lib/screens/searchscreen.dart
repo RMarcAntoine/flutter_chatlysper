@@ -38,8 +38,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Chercher Utilisateurs"),
-        backgroundColor: colorScheme.primary,
+        title: const Text("CHERCHER UTILISATEURS"),
+        centerTitle: true,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.grey,
+        elevation: 0,
       ),
       body: Column(
         children: [
@@ -52,7 +55,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 });
               },
               decoration: InputDecoration(
-                hintText: 'Chercher les utilisateurs...',
+                hintText: 'Chercher un utilisateur...',
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: colorScheme.surface,
